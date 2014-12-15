@@ -141,8 +141,9 @@ class BaseModule{
 			else $query.=" WHERE id=".$this->targetid;
 			
 			
-			if($GLOBALS['api_client']!="NOT_CONFIGURED" && $GLOBALS['api_client']!="NOT_CONFIGURED"){
-				$data['record'] = $GLOBALS['api_client']->doQuery($query)[0];
+			if(isset($GLOBALS['api_client']) && $GLOBALS['api_client']!="NOT_CONFIGURED" && $GLOBALS['api_client']!="API_LOGIN_FAILED"){
+			  	$apidata = $GLOBALS['api_client']->doQuery($query);
+				$data['record']=$apidata[0];
 			}
 			else $data['record'] = array();
 					
