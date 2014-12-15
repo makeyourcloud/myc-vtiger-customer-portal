@@ -76,7 +76,11 @@
 											    <h3 class="panel-title"><?php echo ucfirst($value); ?></h3>
 											  </div>
 											  <div class="panel-body text-center">
+											  <?php if(file_exists("../themes/".$value."/preview.png")): ?>
 											    <img style="max-width:100%;" src="../themes/<?php echo $value; ?>/preview.png">
+											  <?php else: ?>
+											  	<h3> No preview available for this theme!</h3>
+											  <?php endif; ?>  
 											  <?php if(!$selected): ?>
 											  <br><br>
 											  <a class="btn btn-warning" href="../index.php?theme=<?php echo $value; ?>" target="_blank">Preview&nbsp;<i class="fa fa-eye"></i></a>

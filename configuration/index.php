@@ -50,10 +50,7 @@ if(ConfigEditor::checkLogin()){
 		$config['portal_theme']=$_GET['deftheme'];
 		$altmess=ConfigEditor::write('config.php', $config);
 	}
-	
-	echo $uploadzip;
-	if($uploadzip)die();
-		
+
 	
 	if(isset($_REQUEST['action']) && $_REQUEST['action']=="themes") require("views/themes.php");		
 	else require("views/editor.php");	
