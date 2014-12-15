@@ -1,10 +1,8 @@
 MYC Vtiger Customer Portal
 ============================================
 
-
 This software has been built using several other open source libraries
 whose details are given below:
-
 
 JQuery
 ----------------------------------------------------------------------
@@ -26,8 +24,24 @@ Start Bootstrap - SB Admin 2 Theme
 http://startbootstrap.com/template-overviews/sb-admin-2/
 
 
+Fullcalendar JS
+----------------------------------------------------------------------
+http://fullcalendar.io
+
+
+Vtwsclib (vtiger webservices libraries)
+----------------------------------------------------------------------
+http://forge.vtiger.com/projects/vtwsclib/
+
+
+jstz javascript timezone library
+----------------------------------------------------------------------
+http://pellepim.bitbucket.org/jstz/
+
+
 This Software is distribuited under GNU General Public License (GPL) 
 ----------------------------------------------------------------------
 http://www.gnu.org/licenses/gpl.txt
+
 
 Copyright 2014 Proseguo s.l. - MakeYourCloud

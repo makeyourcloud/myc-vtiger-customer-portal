@@ -18,6 +18,11 @@
                         <h3 class="panel-title"><?php echo Language::translate("Please Sign In"); ?></h3>
                     </div>
                     <div class="panel-body">
+                    
+                    <div class="text-center">
+	                    <img src="themes/default/assets/img/<?php echo $GLOBALS['portal_logo']?>" style="padding:20px;max-width:100%;">
+                    </div>
+                    
                     <?php if(isset($loginerror)):  ?>
                     <div class="alert alert-danger alert-dismissible" role="alert">
 					  <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>

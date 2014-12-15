@@ -98,6 +98,11 @@ if (form_ele.value == '') return true;
 
 $(function(){
 	$(".chosen-select").chosen({disable_search_threshold: 10});
+	
+
+	$('#dataTables-example').dataTable().fnSort( [[0,"desc"]]);
+	$('#dataTables-example').DataTable().page.len(50).draw();
+
 })
 
 

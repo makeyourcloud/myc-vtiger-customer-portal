@@ -8,7 +8,7 @@
  * ****************************************************************************** */
  
 $app_strings = Array(
-
+'it_it'=>"Italiano",
 "Ticket No"=>"Ticket Num",
 "Subject"=>"Richiesta",
 "HelpDesk"=>"Assistenza Clienti",
@@ -17,8 +17,11 @@ $app_strings = Array(
 "Product Name"=>"Nome Prodotto",
 "Product"=>"Prodotto",
 "Products"=>"Prodotti",
+"Events"=>"Calendario Eventi",
 "No ProjectTask records Found!"=>"Nessun Compito Trovato!",
 
+'INVALID_USERNAME_OR_PASSWORD'=>"L' Username o la Password inseriti non sono corretti!",
+"UPLOAD_COMPLETED"=>"Caricamento Completato",
 );
 
 

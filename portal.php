@@ -8,10 +8,10 @@
  * All Rights Reserved.
  * ****************************************************************************** */
 
+require_once('lib/nusoap/lib/nusoap.php');
 
 class Router
 {
-
 
  	/*****************************************************************************
  	* Function: Router::start()
@@ -29,16 +29,35 @@ class Router
 		
 		//Get a list of available module for this user 
 		$params = array($_SESSION["loggeduser"]['id']);
+		
 		$avmod=$GLOBALS["sclient"]->call('get_modules',$params);
 		
-		//if no target module specified set HelpDesk as the default index module		
-		if(!isset($targetmodule) || $targetmodule=="") $targetmodule="HelpDesk";
+		//If the dashboard is enabled show them as the index module of the portal
+		if($GLOBALS["show_dashboard"]=="true"){
+			$avmod=array_merge(array("Home"),$avmod);
+		}
+		
+		//If the vtlib api are configured add the configured module to the enabled modules array
+		if(isset($GLOBALS['api_user']) && $GLOBALS['api_user']!="" && isset($GLOBALS['api_pass']) && $GLOBALS['api_pass']!=""){
+			if(Api::connect()!='API_LOGIN_FAILED')
+				if(isset($GLOBALS['api_modules']) && count($GLOBALS['api_modules'])>0)			
+					foreach($GLOBALS['api_modules'] as $modname => $modfields)
+						if(in_array($modname, $GLOBALS['enabled_api_modules'])) $avmod[]=$modname;	
+						 
+		}
+		
+		//if no target module specified set the first module defined in the CRM portal settings as the default index module
+		if(!isset($targetmodule) || $targetmodule=="") $targetmodule=$avmod[0];
 		
 		//if a download for a file is requested call the function to retrieve the desired file
 		if(isset($_REQUEST['downloadfile']) && $_REQUEST['downloadfile']==="true") User::download_file();
 		
 		//Check if the requested module is Available
-		if(!in_array($targetmodule, $avmod)) $targetmodule="HelpDesk";//die("Not Autorized!");
+		if(!in_array($targetmodule, $avmod)){ 
+			Template::display($targetmodule,array(),'not-authorized'); 
+			die();
+		}
+		
 		
 		//Require the base module class
 		require_once("modules/Module/index.php");
@@ -58,6 +77,8 @@ class Router
 		
 		else if($targetmodule=="HelpDesk" && $targetaction=="new") $mod->create_new();
 
+		else if($targetmodule=="Home" || $targetaction=="dashboard") $mod->dashboard();
+
 		else $mod->get_list();
 		
 		//if there is a request for change password call the modal again and show the request resault
@@ -65,6 +86,27 @@ class Router
 
     
     }
+    
+    
+    
+    public static function slugify($text)
+	{ 
+	  // replace non letter or digits by -
+	  $text = preg_replace('~[^\\pL\d]+~u', '-', $text);	
+	  // trim
+	  $text = trim($text, '-');	
+	  // transliterate
+	  $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);	
+	  // lowercase
+	  $text = strtolower($text);	
+	  // remove unwanted characters
+	  $text = preg_replace('~[^-\w]+~', '', $text);	
+	  if (empty($text))
+	  {
+	    return 'n-a';
+	  }	
+	  return $text;
+	}
     
 
 }
@@ -127,9 +169,13 @@ class Language
 	
 	public static function translate($term,$lang=false) 
     {
-		$lang=$_SESSION["loggeduser"]['language'];
 		
-		if(file_exists("language/".$lang.".lang.php")) include("language/".$lang.".lang.php");
+		if($lang) $sel_lang=$lang;
+		else if(isset($_SESSION["loggeduser"]['language'])) $sel_lang=$_SESSION["loggeduser"]['language'];
+		else $sel_lang=key($GLOBALS['languages']);
+		
+		if(file_exists(ROOT_PATH."/language/".$sel_lang.".lang.php")) include(ROOT_PATH."/language/".$sel_lang.".lang.php");
+				
     	if(isset($app_strings[$term])) return $app_strings[$term];
     	else return $term;
     
@@ -140,7 +186,114 @@ class Language
 
 
 
-  
+
+class PortalConfig
+{
+
+    
+    public static function load()
+    {    
+	    define('ROOT_PATH', realpath(__DIR__));
+	    
+    	if(file_exists(ROOT_PATH."/configuration/config.php")){
+	        $config = require ROOT_PATH."/configuration/config.php";
+			$config['api_modules'] =  require ROOT_PATH."/configuration/apimodules.php";
+			
+			if(is_array($config)){
+				
+				foreach($config as $param => $val){
+					global $$param;
+					$GLOBALS[$param]=$val;
+				}
+				if(isset($GLOBALS['default_timezone']) && $GLOBALS['default_timezone']!="") 
+					date_default_timezone_set($GLOBALS['default_timezone']);
+												
+				foreach (scandir("language") as $key => $value) 
+					if (!in_array($value,array(".","..")) && strpos($value, '.lang.php') !== false){
+						$value=str_replace(".lang.php", "", $value); 
+						$GLOBALS['languages'][$value]=Language::translate($value,$value);	
+						
+					}
+					
+				$def_lang = $GLOBALS['languages'][$GLOBALS['default_language']];
+				unset($GLOBALS['languages'][$GLOBALS['default_language']]);
+				$GLOBALS['languages'] = array($GLOBALS['default_language'] => $def_lang) + $GLOBALS['languages'];	
+									
+			}	
+			
+			else {
+				header("Location: configuration/index.php");
+				die();
+			}	
+		}
+		
+		else {
+			header("Location: configuration/index.php");
+			die();	    
+		} 
+	}   
+    
+}
+
+class Portal{
+
+	public static function connect(){
+		global $sclient;
+		session_start();
+		$sclient = new soapclient2($GLOBALS['vtiger_path']."/vtigerservice.php?service=customerportal");
+		$sclient->soap_defencoding = $GLOBALS['default_charset'];
+		if(!file_get_contents($GLOBALS['vtiger_path']."/vtigerservice.php?service=customerportal")){
+			header("Location: configuration/index.php?pe=errpath");
+			die();
+		}
+	}
+	
+
+}
+
+
+class Api{
+	
+	/*****************************************************************************
+ 	* Function: Api::connect()
+ 	* Description: This function try (if api user and pass are provided in the config file) 
+ 	* to set the connection with the vtiger webservices api
+ 	* api using vtlib library
+	* ****************************************************************************/
+	
+	public static function connect() 
+    {
+    	global $api_client;
+    	
+		if(isset($GLOBALS['api_user']) && $GLOBALS['api_user']!="" && isset($GLOBALS['api_pass']) && $GLOBALS['api_pass']!=""){
+			require_once('lib/vtwsclib/Vtiger/WSClient.php');
+					
+			$client = new Vtiger_WSClient($GLOBALS['vtiger_path']);
+			
+			$login = $client->doLogin($GLOBALS['api_user'], $GLOBALS['api_pass']);
+			if(!$login) $api_client='API_LOGIN_FAILED';
+			else $api_client = $client;
+		}
+		
+		else $api_client="NOT_CONFIGURED";
+		
+		return $api_client;
+    
+    }
+    
+    
+    public static function getModuleId($module){
+	    $modules = $GLOBALS['api_client']->doListTypes();
+	    $c=1;
+	    foreach($modules as $modulename => $moduleinfo) {
+	       if($modulename==$module) return $c;
+	       $c++;
+		} 
+		print_r($modules);
+    }
+	
+	
+}  
   
   
 class User
@@ -166,8 +319,10 @@ class User
 			        
 			
 			if(isset($_REQUEST['logout'])) {
-			session_unset();
-			$_SESSION["portal_theme"]=$currtheme;
+				session_unset();
+				$_SESSION["portal_theme"]=$currtheme;
+				header("Location: index.php");
+				die();
 			}
 		
 			if(!isset($_SESSION['loggeduser']) || $_SESSION["loggeduser"]=="ERROR") {
@@ -232,22 +387,25 @@ class User
 	
 		function portal_login($email,$password){
 		
+			if(isset($_REQUEST['lang']) && file_exists("language/".$_REQUEST['lang'].".lang.php")) $tlang = $_REQUEST['lang'];
+				
+			else if(isset($_SESSION["loggeduser"]['language'])) $tlang=$_SESSION["loggeduser"]['language'];
+				
+			else $tlang = "it_it";
+		
 			$params = array('user_name' => "$email",
 			'user_password'=>"$password",
 			'version' => "6.0.1");
 		
 			$result = $GLOBALS["sclient"]->call('authenticate_user', $params);
 			
-			if(isset($result[0]['id'])){ 
-				
-				if(isset($_REQUEST['lang']) && file_exists("language/".$_REQUEST['lang'].".lang.php")) $tlang = $_REQUEST['lang'];
-				
-				else if(isset($_SESSION["loggeduser"]['language'])) $tlang=$_SESSION["loggeduser"]['language'];
-				
-				else $tlang = "it_it";
+			if(isset($result[0]['id'])){ 								
 				
 				$_SESSION["loggeduser"] = $result[0];
 				$_SESSION["loggeduser"]['language'] = $tlang;
+				
+				$params = Array('id'=>$_SESSION["loggeduser"]['id']);
+				$_SESSION["loggeduser"]["accountid"] = $GLOBALS["sclient"]->call('get_check_account_id', $params);
 				
 			}
 			
@@ -331,12 +489,27 @@ class User
 					{
 						$id=$_REQUEST['id'];
 						$block = $_REQUEST['module'];
-						$params = array('id' => "$id", 'block'=>"$block", 'contactid'=>$_SESSION["loggeduser"]['id'],'sessionid'=>$_SESSION["loggeduser"]['sessionid']);
-						$fileContent = $GLOBALS["sclient"]->call('get_pdf', $params);
-						$fileType ='application/pdf';
-						$fileContent = $fileContent[0];
-						$filesize = strlen(base64_decode($fileContent));
-						$filename = "$block.pdf";
+												
+						$params = array('id' => "$id", 'block'=>"$block", 'contactid'=>$_SESSION["loggeduser"]['id'],'sessionid'=>$_SESSION["loggeduser"]['sessionid'], 'language'=>$_SESSION["loggeduser"]['language']);
+						$fileContent = $GLOBALS["sclient"]->call('get_pdfmaker_pdf', $params);
+						//if something went wrong within the get_pdf_maker function then call the standard function get_pdf   
+						if($fileContent[0] != "failure"  && isset($fileContent[0]))
+						{
+						    $fileType ='application/pdf';
+						    $filename = $fileContent[0];
+						    $fileContent = $fileContent[1];
+						    $filesize = strlen(base64_decode($fileContent));
+						}
+						else
+						{
+						    $params = array('id' => "$id", 'block'=>"$block", 'contactid'=>$_SESSION["loggeduser"]['id'],'sessionid'=>$_SESSION["loggeduser"]['sessionid']);
+						    $fileContent = $GLOBALS["sclient"]->call('get_pdf', $params);
+						    $fileType ='application/pdf';
+						    $fileContent = $fileContent[0];
+						    $filesize = strlen(base64_decode($fileContent));
+						    $filename = "$block.pdf";
+						}
+
 		
 					}
 					else if($_REQUEST['module'] == 'Documents')

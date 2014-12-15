@@ -18,7 +18,9 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="index.html">MYC Customer Portal</a>
+                <a class="navbar-brand" href="index.html" style="padding: 5px 15px;">
+	                <img src="themes/default/assets/img/<?php echo $GLOBALS['portal_logo']?>" style="max-height:40px;">
+                </a>
             </div>
             <!-- /.navbar-header -->
 

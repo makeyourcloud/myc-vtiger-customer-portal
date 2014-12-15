@@ -40,7 +40,7 @@ function detail($targetid){
 
 	$data['recordinfo']=$mod_infos;
 	
-	Template::display($module,$data,'detail');
+	Template::display($this->module,$data,'detail');
 
 }
 

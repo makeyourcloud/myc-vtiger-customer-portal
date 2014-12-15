@@ -97,7 +97,6 @@
                             <?php echo Language::translate("Attachments"); ?>
                         </div>
                         
-                        
                         <table class="table">
                         	<?php 
                         	if(isset($data['attachments']) && count($data['attachments'])>0 && $data['attachments']!="") foreach($data['attachments'] as $cat){
@@ -111,6 +110,15 @@
 						<?php if($data['ticket_status']!="Closed"): ?>
                             
                             <div class="panel-footer">
+                            
+                            <?php if(isset($data['uploadres'])): ?>
+                            <?php if($data['uploadres']!=""): ?>
+                            <div class="alert alert-danger" role="alert"><?php echo Language::translate($data['uploadres']); ?></div>
+                            <?php else: ?>
+                            <div class="alert alert-success" role="alert"><?php echo Language::translate("UPLOAD_COMPLETED"); ?></div>
+                            <?php endif; ?>
+                            
+                            <?php endif; ?>
                             
                             <form name="fileattachment" method="post" enctype="multipart/form-data" action="index.php">
 							<input type="hidden" name="module" value="HelpDesk">

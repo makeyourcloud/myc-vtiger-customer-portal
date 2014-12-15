@@ -19,7 +19,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>MYC Vtiger Customer Portal</title>
+    <title><?php echo Language::translate(isset($module)?$module:'MYC Vtiger Customer Portal'); ?></title>
 
     <!-- Bootstrap Core CSS -->
     <link href="themes/default/assets/css/bootstrap.min.css" rel="stylesheet">

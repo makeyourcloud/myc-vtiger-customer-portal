@@ -12,6 +12,7 @@
 
 
 $app_strings = Array(
+'en_us'=>"English",
 'customerportal'=>'Customer Portal',
 'LBL_LOGIN'=>'Login',
 'LBL_USER_NAME'=>'User Id:',
@@ -453,6 +454,8 @@ Additionally, you can also search the entire knowledge base by entering keywords
 'Ticket Title' => 'Ticket Title',
 'Re' => 'Re :',
 
+'INVALID_USERNAME_OR_PASSWORD'=>'The Username or Password are not correct!',
+"UPLOAD_COMPLETED"=>"Upload Completed",
 );
 
 ?>

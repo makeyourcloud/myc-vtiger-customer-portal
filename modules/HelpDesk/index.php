@@ -29,9 +29,7 @@ class HelpDesk extends BaseModule{
 			'id'=>$_SESSION["loggeduser"]['id'], 
 			'sessionid'=>$_SESSION["loggeduser"]['sessionid'], 
 			'user_name' => $_SESSION["loggeduser"]['user_name'], 
-			'onlymine' => $onlymine, 
-			'where' => "", 
-			'match' => ""
+			'onlymine' => $onlymine,
 		));	
 		
 		
@@ -41,6 +39,7 @@ class HelpDesk extends BaseModule{
 		if(isset($lmod) && count($lmod)>0  && $lmod!=""){
 		$data['tickets']=$lmod[1]['data'];
 		$data['tableheader']=$lmod[0]['head'][0];
+		$data['summaryinfo']=$this->dashboard();
 		}
 		
 		
@@ -62,7 +61,7 @@ class HelpDesk extends BaseModule{
 	
 		$data['ticketid'] = $ticketid;
 		
-		if(isset($_FILES['customerfile'])) $uploadres=$this->add_attachment();
+		if(isset($_FILES['customerfile'])) $data['uploadres']=$this->add_attachment();
 		if(isset($_REQUEST['comments'])) $comm=$this->update_comment();
 		if(isset($_REQUEST['fun']) && $_REQUEST['fun']=="close_ticket") $cl=$this->close_ticket($ticketid);
 		
