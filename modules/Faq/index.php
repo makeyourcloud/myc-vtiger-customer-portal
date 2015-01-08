@@ -18,13 +18,14 @@ function get_list(){
 	$params = array(array('id' => $_SESSION["loggeduser"]['id'], 'sessionid'=>$_SESSION["loggeduser"]['sessionid']));
 	$result = $GLOBALS["sclient"]->call('get_KBase_details', $params);
 	
-	
+	$data['faqcategories']=array();
 	$data['faqcategories']=$result[0];
 	$data['faqproducts']=$result[1];
 	$data['faqs']=$result[2];
 	
 	$faqspercat=array();
 	
+	if(isset($data['faqs']) && count($data['faqs'])>0 && $data['faqs']!="")
 	foreach($data['faqs'] as $faq){
 		if(!isset($faqspercat[$faq["category"]])) $faqspercat[$faq["category"]]=array();
 		
@@ -39,6 +40,7 @@ function get_list(){
 	
 	$faqpr=array();
 
+	if(isset($data['faqproducts']) && count($data['faqproducts'])>0 && $data['faqproducts']!="")
 	foreach($data['faqproducts'] as $faqprod){
 		if(!isset($faqpr[$faqprod["productid"]])) $faqpr[$faqprod["productid"]]=array();
 		$faqpr[$faqprod["productid"]]=$faqprod;
