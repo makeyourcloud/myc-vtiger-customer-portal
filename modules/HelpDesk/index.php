@@ -160,7 +160,7 @@ class HelpDesk extends BaseModule{
 		$priority = $_REQUEST['priority'];
 		$severity = $_REQUEST['severity'];
 		$category = $_REQUEST['category'];
-		$serviceid = $_REQUEST['servicename'];	
+		$serviceid = $_REQUEST['serviceid'];	
 		$projectid = $_REQUEST['projectid'];
 		$this->module = $_REQUEST['ticket_module'];	
 		$productid = $_REQUEST['productidf'];
