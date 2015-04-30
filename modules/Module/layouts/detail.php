@@ -14,6 +14,13 @@
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
+          
+                          <?php 
+                	if(isset($data['plugin_data']['views']['header']))  
+                		foreach($data['plugin_data']['views']['header'] as $pluginname => $viewname)
+                			Template::displayPlugin($pluginname,$data,$viewname);
+                
+                ?> 
             
           <div class="row">
              
@@ -48,7 +55,12 @@
                 
                 <?php endforeach;  ?>
                            
-                    
+                <?php 
+                	if(isset($data['plugin_data']['views']['blocks']))  
+                		foreach($data['plugin_data']['views']['blocks'] as $pluginname => $viewname)
+                			Template::displayPlugin($pluginname,$data,$viewname);
+                
+                ?>  
                    
                      
                 
@@ -61,7 +73,12 @@
            
            
            
-           
+                           <?php 
+                	if(isset($data['plugin_data']['views']['footer']))  
+                		foreach($data['plugin_data']['views']['footer'] as $pluginname => $viewname)
+                			Template::displayPlugin($pluginname,$data,$viewname);
+                
+                ?> 
            
             
             

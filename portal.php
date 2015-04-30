@@ -9,6 +9,7 @@
  * ****************************************************************************** */
 
 require_once('lib/nusoap/lib/nusoap.php');
+require_once('lib/mycwsapi/webservices.class.php');
 
 class Router
 {
@@ -42,9 +43,12 @@ class Router
 			if(Api::connect()!='API_LOGIN_FAILED')
 				if(isset($GLOBALS['api_modules']) && count($GLOBALS['api_modules'])>0)			
 					foreach($GLOBALS['api_modules'] as $modname => $modfields)
-						if(in_array($modname, $GLOBALS['enabled_api_modules'])) $avmod[]=$modname;	
+						if(isset($modfields["is_enabled"]) && $modfields["is_enabled"]=="true") $avmod[]=$modname;
+						//if(in_array($modname, $GLOBALS['enabled_api_modules'])) $avmod[]=$modname;	
 						 
 		}
+		
+		Plugins::runall("PortalBase","base","preTemplateLoad",$_REQUEST);
 		
 		//if no target module specified set the first module defined in the CRM portal settings as the default index module
 		if(!isset($targetmodule) || $targetmodule=="") $targetmodule=$avmod[0];
@@ -131,8 +135,14 @@ class Template
       
       if(isset($_SESSION["portal_theme"])) $currtheme=$_SESSION['portal_theme'];
       
-      else $currtheme=$GLOBALS["portal_theme"];
+      else {
+      	if(isset($GLOBALS["portal_theme"]))
+      		$currtheme=$GLOBALS["portal_theme"];
+      	else $currtheme="default";
+      }
       
+      $data=Plugins::runall($module,$viewname,"preTemplateLoad",$data);
+      if(!isset($data['plugin_data'])) $data['plugin_data']=array();
       //Require common header and menu files	
    	  require_once("themes/".$currtheme."/header.php");
 	  require_once("themes/".$currtheme."/menu.php");
@@ -155,7 +165,17 @@ class Template
 	  //Require common footer file
 	  require_once("themes/".$currtheme."/footer.php");
 	  
+	  Plugins::runall($module,$viewname,"postTemplateLoad",$data);
+	  
     }
+
+    public static function displayPlugin($pluginname,$data,$viewname) 
+    {
+    	if(file_exists("plugins/".$pluginname."/views/".$viewname.".php")) 
+			require_once("plugins/".$pluginname."/views/".$viewname.".php");
+    }    
+    
+    
 }
 
 class Language
@@ -169,13 +189,22 @@ class Language
 	
 	public static function translate($term,$lang=false) 
     {
-		
+
 		if($lang) $sel_lang=$lang;
 		else if(isset($_SESSION["loggeduser"]['language'])) $sel_lang=$_SESSION["loggeduser"]['language'];
 		else $sel_lang=key($GLOBALS['languages']);
 		
 		if(file_exists(ROOT_PATH."/language/".$sel_lang.".lang.php")) include(ROOT_PATH."/language/".$sel_lang.".lang.php");
-				
+		
+		if(preg_match('/\\A(?:^((\\d{2}(([02468][048])|([13579][26]))[\\-\\/\\s]?((((0?[13578])|(1[02]))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])))))|(\\d{2}(([02468][1235679])|([13579][01345789]))[\\-\\/\\s]?((((0?[13578])|(1[02]))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\\-\\/\\s]?((0?[1-9])|(1[0-9])|(2[0-8]))))))(\\s(((0?[0-9])|(1[0-9])|(2[0-3]))\\:([0-5][0-9])((\\s)|(\\:([0-5][0-9])))?))?$)\\z/', $term) || $term=="2015-03-26 19:31:51"){
+			$date=strtotime($term);
+			if(strlen($term)>10) return date($GLOBALS['date_format'].' h:i', $date);
+			else return date($GLOBALS['date_format'], $date);
+			
+		}
+		
+
+		
     	if(isset($app_strings[$term])) return $app_strings[$term];
     	else return $term;
     
@@ -205,20 +234,22 @@ class PortalConfig
 					global $$param;
 					$GLOBALS[$param]=$val;
 				}
+				
 				if(isset($GLOBALS['default_timezone']) && $GLOBALS['default_timezone']!="") 
 					date_default_timezone_set($GLOBALS['default_timezone']);
-												
-				foreach (scandir("language") as $key => $value) 
+											
+				foreach (scandir("language") as $key => $value){
 					if (!in_array($value,array(".","..")) && strpos($value, '.lang.php') !== false){
-						$value=str_replace(".lang.php", "", $value); 
-						$GLOBALS['languages'][$value]=Language::translate($value,$value);	
-						
-					}
+						$value=str_replace(".lang.php", "", $value); 						
+						$GLOBALS['languages'][$value]=Language::translate($value,$value);							
+					}						
+				}
 					
 				$def_lang = $GLOBALS['languages'][$GLOBALS['default_language']];
 				unset($GLOBALS['languages'][$GLOBALS['default_language']]);
-				$GLOBALS['languages'] = array($GLOBALS['default_language'] => $def_lang) + $GLOBALS['languages'];	
-									
+				
+				$GLOBALS['languages']=array_merge(array($GLOBALS['default_language']=>$def_lang),$GLOBALS['languages']);		
+							
 			}	
 			
 			else {
@@ -232,6 +263,7 @@ class PortalConfig
 			die();	    
 		} 
 	}   
+	
     
 }
 
@@ -242,7 +274,8 @@ class Portal{
 		session_start();
 		$sclient = new soapclient2($GLOBALS['vtiger_path']."/vtigerservice.php?service=customerportal");
 		$sclient->soap_defencoding = $GLOBALS['default_charset'];
-		if(!file_get_contents($GLOBALS['vtiger_path']."/vtigerservice.php?service=customerportal")){
+		
+		if(WSRequest::urlExists($GLOBALS['vtiger_path']."/vtigerservice.php?service=customerportal")===false){
 			header("Location: configuration/index.php?pe=errpath");
 			die();
 		}
@@ -272,7 +305,10 @@ class Api{
 			
 			$login = $client->doLogin($GLOBALS['api_user'], $GLOBALS['api_pass']);
 			if(!$login) $api_client='API_LOGIN_FAILED';
-			else $api_client = $client;
+			else {
+				$api_client = $client;
+				MYCWSApi::connect();
+			} 
 		}
 		
 		else $api_client="NOT_CONFIGURED";
@@ -289,10 +325,38 @@ class Api{
 	       if($modulename==$module) return $c;
 	       $c++;
 		} 
-		print_r($modules);
+    }
+    
+    public static function is_connected(){
+    	global $api_client;
+	    if(!isset($api_client) || $api_client=="NOT_CONFIGURED" ||  $api_client=="API_LOGIN_FAILED") { 
+	    	Api::connect();
+	    	if(!isset($api_client) || $api_client=="NOT_CONFIGURED" ||  $api_client=="API_LOGIN_FAILED")
+	    		return false;
+	    	else return true;	
+	    }
+	    else return true;
     }
 	
 	
+}
+
+class MYCWSApi{
+	public static function connect() 
+    {
+    	global $mycwsapi;
+    	
+		if(isset($GLOBALS['api_user']) && $GLOBALS['api_user']!="" && isset($GLOBALS['api_pass']) && $GLOBALS['api_pass']!=""){			
+					
+			$mycwsapi=new VTWebservices($GLOBALS['vtiger_path'],$GLOBALS['api_user'], $GLOBALS['api_pass']);
+			if(!$mycwsapi->checkLogin()) $mycwsapi='API_LOGIN_FAILED';
+		}
+		
+		else $mycwsapi="NOT_CONFIGURED";
+		
+		return $api_client;
+    
+    }	
 }  
   
   
@@ -485,14 +549,51 @@ class User
 		
 					//Added for enhancement from Rosa Weber
 		
-					if($_REQUEST['module'] == 'Invoice' || $_REQUEST['module'] == 'Quotes')
+					
+					if($_REQUEST['module'] == 'Documents')
 					{
 						$id=$_REQUEST['id'];
+						$folderid = $_REQUEST['folderid'];
 						$block = $_REQUEST['module'];
+						$params = array('id' => "$id", 'folderid'=> "$folderid",'block'=>"$block", 'contactid'=>$_SESSION["loggeduser"]['id'],'sessionid'=>$_SESSION["loggeduser"]['sessionid']);
+						$result = $GLOBALS["sclient"]->call('get_filecontent_detail', $params);
+						$fileType=$result[0]['filetype'];
+						$filesize=$result[0]['filesize'];
+						$filename=html_entity_decode($result[0]['filename']);
+						$fileContent=$result[0]['filecontents'];
+					}
+					else if(isset($_REQUEST['ticketid']))
+					{
+						$ticketid = $_REQUEST['ticketid'];
+						$fileid = $_REQUEST['fileid'];
+						//we have to get the content by passing the customerid, fileid and filename
+						$customerid = $_SESSION["loggeduser"]['id'];
+						$sessionid = $_SESSION["loggeduser"]['sessionid'];
+						$params = array(array('id'=>$customerid,'fileid'=>$fileid,'filename'=>$filename,'sessionid'=>$sessionid,'ticketid'=>$ticketid));
+						$fileContent = $GLOBALS["sclient"]->call('get_filecontent', $params);
+						
+						/* PROBLEMI NEL CRM DOCUMENTI A DOPPIO NASCOSTI
+						$params = array('id' => $fileid,'sessionid'=>$sessionid);
+						$r=$GLOBALS["sclient"]->call('updateCount', $params);
+						print_r($r);
+						die();
+						*/
+						$fileContent = $fileContent[0];
+						$filesize = strlen(base64_decode($fileContent));
+		
+					}
+					
+					else {
+						if(isset($GLOBALS['api_modules'][$_REQUEST['module']])) $block=substr($_REQUEST['module'], 0, -2);
+						else $block = $_REQUEST['module'];
+						$id=$_REQUEST['id'];
+						
 												
 						$params = array('id' => "$id", 'block'=>"$block", 'contactid'=>$_SESSION["loggeduser"]['id'],'sessionid'=>$_SESSION["loggeduser"]['sessionid'], 'language'=>$_SESSION["loggeduser"]['language']);
 						$fileContent = $GLOBALS["sclient"]->call('get_pdfmaker_pdf', $params);
 						//if something went wrong within the get_pdf_maker function then call the standard function get_pdf   
+						
+						
 						if($fileContent[0] != "failure"  && isset($fileContent[0]))
 						{
 						    $fileType ='application/pdf';
@@ -509,34 +610,12 @@ class User
 						    $filesize = strlen(base64_decode($fileContent));
 						    $filename = "$block.pdf";
 						}
+						
+						if($fileContent=="#NOT AUTHORIZED#") header("Location: index.php?module=".$_REQUEST['module']."&action=index");
 
 		
 					}
-					else if($_REQUEST['module'] == 'Documents')
-					{
-						$id=$_REQUEST['id'];
-						$folderid = $_REQUEST['folderid'];
-						$block = $_REQUEST['module'];
-						$params = array('id' => "$id", 'folderid'=> "$folderid",'block'=>"$block", 'contactid'=>$_SESSION["loggeduser"]['id'],'sessionid'=>$_SESSION["loggeduser"]['sessionid']);
-						$result = $GLOBALS["sclient"]->call('get_filecontent_detail', $params);
-						$fileType=$result[0]['filetype'];
-						$filesize=$result[0]['filesize'];
-						$filename=html_entity_decode($result[0]['filename']);
-						$fileContent=$result[0]['filecontents'];
-					}
-					else
-					{
-						$ticketid = $_REQUEST['ticketid'];
-						$fileid = $_REQUEST['fileid'];
-						//we have to get the content by passing the customerid, fileid and filename
-						$customerid = $_SESSION["loggeduser"]['id'];
-						$sessionid = $_SESSION["loggeduser"]['sessionid'];
-						$params = array(array('id'=>$customerid,'fileid'=>$fileid,'filename'=>$filename,'sessionid'=>$sessionid,'ticketid'=>$ticketid));
-						$fileContent = $GLOBALS["sclient"]->call('get_filecontent', $params);
-						$fileContent = $fileContent[0];
-						$filesize = strlen(base64_decode($fileContent));
-		
-					}
+					
 					// : End
 		
 					//we have to get the content by passing the customerid, fileid and filename
@@ -556,7 +635,33 @@ class User
 
 }  
 
-
+class Plugins {
+	
+	public static function load_plugins(){
+		global $loaded_plugins;		
+		foreach (scandir(ROOT_PATH."/plugins/") as $key => $pluginname){
+			if (!in_array($pluginname,array(".",".."))) 
+				if(file_exists(ROOT_PATH."/plugins/".$pluginname."/".$pluginname.".php")){
+					include_once(ROOT_PATH."/plugins/".$pluginname."/".$pluginname.".php");
+					$pluginclassname = ucfirst($pluginname)."Plugin";		
+					$loaded_plugins[$pluginname] = new $pluginclassname;
+				}		
+		}
+	}
+	
+	public static function runall($modulename,$action,$event,$data=array()){
+		global $loaded_plugins;
+		foreach($loaded_plugins as $pluginname => $pluginInstance){
+			if(in_array($modulename,$pluginInstance->affectedmodules) || in_array("Portal", $pluginInstance->affectedmodules))
+				if(method_exists($pluginInstance,$event))
+					$data=$pluginInstance->$event($modulename,$action,$data);
+			
+		}
+		return $data;
+		
+	}
+ 	
+}
 
 
 

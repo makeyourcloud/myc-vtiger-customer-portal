@@ -13,6 +13,7 @@ class BaseModule{
 
 	var $module;
 	var $targetid;
+	var $moduleinfo;
 	
 	/*****************************************************************************
 	* Function: BaseModule::__construct()
@@ -23,6 +24,9 @@ class BaseModule{
 		if(!$module) $this->module=get_class($this);
 		else $this->module=$module;
 		
+		if(isset($GLOBALS['api_modules'][$this->module]))
+			$this->moduleinfo=$GLOBALS['api_client']->doDescribe($GLOBALS['api_modules'][$this->module]['m']);
+		//else $this->moduleinfo=$GLOBALS['api_client']->doDescribe($GLOBALS['api_modules'][$this->module]['m']);
 	}
 
 
@@ -58,24 +62,57 @@ class BaseModule{
 		}
 		
 		else {
-			$query = "SELECT * FROM ".$GLOBALS['api_modules'][$this->module]['modulename']; 
+			$lc=1;
+			$totlistcols=count($GLOBALS['api_modules'][$this->module]['list_fields']);
+			foreach($GLOBALS['api_modules'][$this->module]['list_fields'] as $lf){
+				$selstring.=$lf;
+				if($lc!=$totlistcols) $selstring.=", ";
+				$lc++;
+			}
+			
+			
+			$query = "SELECT ".$selstring." FROM ".$GLOBALS['api_modules'][$this->module]['m']; 
 			if(isset($GLOBALS['api_modules'][$this->module]['relation_fields'])){
 				$query.=" WHERE ";
 				$firstcond=true;
 				foreach($GLOBALS['api_modules'][$this->module]['relation_fields'] as $relfield){
 					if(!$firstcond) $query.=" OR ";
-					if($relfield=="contact_id") $query.=$relfield."=".Api::getModuleId("Contacts")."x".$_SESSION["loggeduser"]['id'];
-					else $query.=$relfield."=".Api::getModuleId("Accounts")."x".$_SESSION["loggeduser"]['accountid'];
+					//if($relfield=="contact_id") 
+						$query.=$relfield."=".Api::getModuleId("Contacts")."x".$_SESSION["loggeduser"]['id'];
+					//else 
+						$query.=" OR ".$relfield."=".Api::getModuleId("Accounts")."x".$_SESSION["loggeduser"]['accountid'];
 					
 					$firstcond=false;
 				}
 			}
 			
+			//print_r($this->moduleinfo);
+			//die();
+			
 			if($GLOBALS['api_client']!="NOT_CONFIGURED" && $GLOBALS['api_client']!="NOT_CONFIGURED"){
 				$data['records'] = $GLOBALS['api_client']->doQuery($query);
 			}
 			else $data['records'] = array();
+			
+			
+			$rc=0;
+			foreach($data['records'] as $record){
+				foreach($record as $fieldname => $fielddata){
+					$re = "/^[\\d]*x[\\d]*$/"; 
+					if(preg_match($re,$fielddata) && $fieldname!="id"){
+						$data['records'][$rc][$fieldname]=$GLOBALS['api_client']->doRetrieve($fielddata);
+					}
 					
+				}
+				$rc++;
+			}
+			
+			$this->moduleinfo['fieldslabels']=array();
+			foreach($this->moduleinfo['fields'] as $fieldinfo)
+				$this->moduleinfo['fieldslabels'][$fieldinfo['name']]=$fieldinfo['label'];
+			//print_r($this->moduleinfo['fieldslabels']);	
+				
+			$data['moduleinfo']=$this->moduleinfo;		
 			$data['records_columns'] = $GLOBALS['api_modules'][$this->module]['list_fields'];
 
 			Template::display($this->module,$data,"list_api");
@@ -91,7 +128,7 @@ class BaseModule{
 	public function detail($targetid,$display=true) 
     {
     	$this->targetid = $targetid;
-    	 
+    	$data['targetid']=$targetid;
     	if(!isset($GLOBALS['api_modules'][$this->module])){
     	   	
 		$sparams = array(
@@ -125,14 +162,16 @@ class BaseModule{
 		
 		else {
 		
-			$query = "SELECT * FROM ".$GLOBALS['api_modules'][$this->module]['modulename']; 
+			$query = "SELECT * FROM ".$GLOBALS['api_modules'][$this->module]['m']; 
 			if(isset($GLOBALS['api_modules'][$this->module]['relation_fields'])){
 				$query.=" WHERE ";
 				$firstcond=true;
 				foreach($GLOBALS['api_modules'][$this->module]['relation_fields'] as $relfield){
 					if(!$firstcond) $query.=" OR ";
-					if($relfield=="contact_id") $query.=$relfield."=".Api::getModuleId("Contacts")."x".$_SESSION["loggeduser"]['id'];
-					else $query.=$relfield."=".Api::getModuleId("Accounts")."x".$_SESSION["loggeduser"]['accountid'];
+					//if($relfield=="contact_id") 
+						$query.=$relfield."=".Api::getModuleId("Contacts")."x".$_SESSION["loggeduser"]['id'];
+					//else 
+						$query.=" OR ".$relfield."=".Api::getModuleId("Accounts")."x".$_SESSION["loggeduser"]['accountid'];
 					
 					$firstcond=false;
 				}
@@ -146,9 +185,50 @@ class BaseModule{
 				$data['record']=$apidata[0];
 			}
 			else $data['record'] = array();
+			
+			$rc=0;
+			foreach($data['record'] as $fieldname => $fielddata){
+				$re = "/^[\\d]*x[\\d]*$/"; 
+				if(preg_match($re,$fielddata) && $fieldname!="id"){
+					$data['record'][$fieldname]=$GLOBALS['api_client']->doRetrieve($fielddata);
+				}
+				
+				
 					
-			$data['records_columns'] = $GLOBALS['api_modules'][$this->module]['detail_fields'];
+			}
+			
+			$relatedmoduleinfo=array();
 
+		
+			foreach($this->moduleinfo['fields'] as $fieldinfo){
+				if($fieldinfo['type']['name']=="reference" && count($fieldinfo['type']['refersTo']>0)){
+					$fieldrelations=count($fieldinfo['type']['refersTo']);
+					foreach($fieldinfo['type']['refersTo'] as $relatedmodulename){
+						$relmodinfo=$GLOBALS['api_client']->doDescribe($relatedmodulename);
+						$c=0;
+						foreach($relmodinfo['fields'] as $relfieldinfo){
+							if($relfieldinfo['type']['name']=="reference")
+								unset($relmodinfo['fields'][$c]);	
+							else { 
+								$this->moduleinfo['fieldslabels'][$fieldinfo['name'].".".$relmodinfo['name'].".".$relfieldinfo['name']]=$relmodinfo['label']." - ".$relfieldinfo['label'];	
+							}				
+							$c++;
+						}
+						$relatedmoduleinfo[$fieldinfo['name']][$relmodinfo['name']]=$relmodinfo;
+					}	
+				}
+				
+				$this->moduleinfo['fieldslabels'][$fieldinfo['name']]=$fieldinfo['label'];
+			}
+			
+
+			$data['moduleinfo']=$this->moduleinfo;		
+			$data['records_columns'] = $GLOBALS['api_modules'][$this->module]['detail_fields'];
+			$data['download_pdf'] = $GLOBALS['api_modules'][$this->module]['download_pdf'];
+			$data['targetidcrm']=substr($this->targetid, strpos($this->targetid, "x") + 1);
+			
+			
+			
 			Template::display($this->module,$data,"detail_api");
 			
 		}				
@@ -262,12 +342,13 @@ class BaseModule{
 		
 		}
 		
+		$tpldata['dashboarddata']=$data;
 		
 		if($this->module!='Home') {
 			return $data;		
 		}		
 		
-		else Template::display($this->module,$data,'dashboard');
+		else Template::display($this->module,$tpldata,'dashboard');
 	}
 
 	

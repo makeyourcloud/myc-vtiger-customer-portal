@@ -15,6 +15,13 @@
                 <!-- /.col-lg-12 -->
             </div>
             
+                                      <?php 
+                	if(isset($data['plugin_data']['views']['header']))  
+                		foreach($data['plugin_data']['views']['header'] as $pluginname => $viewname)
+                			Template::displayPlugin($pluginname,$data,$viewname);
+                
+                ?> 
+            
           <div class="row">
              
   <?php if(isset($data['recordinfo']) && count($data['recordinfo'])>0 && $data['recordinfo']!=""){ foreach($data['recordinfo'] as $blockname => $tblocks): ?>
@@ -47,6 +54,13 @@
                 <!-- /.col-lg-6 -->
                 
                 <?php endforeach;  ?>
+                
+                                          <?php 
+                	if(isset($data['plugin_data']['views']['blocks']))  
+                		foreach($data['plugin_data']['views']['blocks'] as $pluginname => $viewname)
+                			Template::displayPlugin($pluginname,$data,$viewname);
+                
+                ?> 
                      
                   <div class="col-lg-12">
             
@@ -174,7 +188,12 @@
                 <!-- /.row -->
            
            
-           
+                                     <?php 
+                	if(isset($data['plugin_data']['views']['footer']))  
+                		foreach($data['plugin_data']['views']['footer'] as $pluginname => $viewname)
+                			Template::displayPlugin($pluginname,$data,$viewname);
+                
+                ?> 
            
            
             

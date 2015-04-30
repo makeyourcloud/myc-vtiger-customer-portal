@@ -12,6 +12,9 @@
 
 
 $app_strings = Array(
+"Open" => "Open",
+
+
 'en_us'=>"English",
 'customerportal'=>'Customer Portal',
 'LBL_LOGIN'=>'Login',
@@ -395,7 +398,6 @@ Additionally, you can also search the entire knowledge base by entering keywords
 'MORE_THAN_ONE_USER'=>'There may more than one user with this details. Please contact your administrator.',
 'INVALID_USERNAME_OR_PASSWORD'=>'Invalid Username or Password',
 'LBL_CATEGORY' => 'Category',
-'Open'=>'Open',
 'In Progress'=>'In Progress',
 'Wait For Response'=>'Wait For Response',
 'Closed'=>'Closed' ,
@@ -456,6 +458,8 @@ Additionally, you can also search the entire knowledge base by entering keywords
 
 'INVALID_USERNAME_OR_PASSWORD'=>'The Username or Password are not correct!',
 "UPLOAD_COMPLETED"=>"Upload Completed",
+
+
 );
 
 ?>

@@ -14,7 +14,12 @@
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
-            
+                                      <?php 
+                	if(isset($data['plugin_data']['views']['header']))  
+                		foreach($data['plugin_data']['views']['header'] as $pluginname => $viewname)
+                			Template::displayPlugin($pluginname,$data,$viewname);
+                
+                ?> 
           <div class="row">
             
   <?php foreach($data['ticket_infos'] as $blockname => $tblocks): ?>
@@ -31,7 +36,7 @@
                         	<?php
                         	
                         		foreach($tblocks as $field){
-		                        	echo "<tr><td><b>".Language::translate($field['label']).": </b></td><td>".$field['value']."</td></tr>";
+		                        	echo "<tr><td><b>".Language::translate($field['label']).": </b></td><td>".Language::translate($field['value'])."</td></tr>";
 		                        }
 	                       
                         	?>
@@ -213,13 +218,25 @@
                 <!-- /.col-lg-6 -->
                 
                 
+                                          <?php 
+                	if(isset($data['plugin_data']['views']['blocks']))  
+                		foreach($data['plugin_data']['views']['blocks'] as $pluginname => $viewname)
+                			Template::displayPlugin($pluginname,$data,$viewname);
+                
+                ?> 
+                
             </div>
             <!-- /.row -->
            
            
            
            
-           
+                                     <?php 
+                	if(isset($data['plugin_data']['views']['footer']))  
+                		foreach($data['plugin_data']['views']['footer'] as $pluginname => $viewname)
+                			Template::displayPlugin($pluginname,$data,$viewname);
+                
+                ?> 
            
            
            

@@ -14,10 +14,17 @@
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
+     
+                               <?php 
+                	if(isset($data['plugin_data']['views']['header']))  
+                		foreach($data['plugin_data']['views']['header'] as $pluginname => $viewname)
+                			Template::displayPlugin($pluginname,$data,$viewname);
+                
+                ?> 
             
           <div class="row">
              
-  <?php if(isset($data) && count($data)>0 && $data!=""){ foreach($data as $modname => $modinfos): ?>
+  <?php if(isset($data['dashboarddata']) && count($data['dashboarddata'])>0 && $data['dashboarddata']!=""){ foreach($data['dashboarddata'] as $modname => $modinfos): ?>
             <div class="col-lg-4">
             
                
@@ -71,7 +78,12 @@
            
            
            
-           
+                                     <?php 
+                	if(isset($data['plugin_data']['views']['footer']))  
+                		foreach($data['plugin_data']['views']['footer'] as $pluginname => $viewname)
+                			Template::displayPlugin($pluginname,$data,$viewname);
+                
+                ?> 
            
             
             

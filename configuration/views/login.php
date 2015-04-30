@@ -1,5 +1,14 @@
-<?php 	
-?>
+<?php
+
+/* * *******************************************************************************
+ * The content of this file is subject to the MYC Vtiger Customer Portal license.
+ * ("License"); You may not use this file except in compliance with the License
+ * The Initial Developer of the Original Code is Proseguo s.l. - MakeYourCloud
+ * Portions created by Proseguo s.l. - MakeYourCloud are Copyright(C) Proseguo s.l. - MakeYourCloud
+ * All Rights Reserved.
+ * ****************************************************************************** */
+ 
+ ?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -10,7 +19,7 @@
 
     <!-- Bootstrap -->
     <link href="../themes/default/assets/css/bootstrap.min.css" rel="stylesheet">
-    
+            <link href="views/assets/editor.css" rel="stylesheet">
     <link href="../themes/default/assets/font-awesome-4.1.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="../themes/default/assets/css/chosen.min.css" rel="stylesheet" type="text/css">
 
@@ -29,21 +38,22 @@
     <script src="../themes/default/assets/js/chosen.jquery.min.js"></script>
     
   </head>
-  <body>
+  <body class="login">
    
    	
   
     <div class="container">
         <div class="row">
-            <div class="col-md-4 col-md-offset-4" style="margin-top:10%;">
+<div style="  text-align: center;">
+						<img  src="views/assets/logo_myc_bsr.png">
+                    </div>
+            <div class="col-md-4 col-md-offset-4" >
                 <div class="login-panel panel panel-default"  id="loginpanel">
                     <div class="panel-heading">
-                        <h3 class="panel-title">Portal Configuration Login</h3>
+                        <h3 class="panel-title text-center">Portal Configuration Login</h3>
                     </div>
                     <div class="panel-body">
-                    <div style="width:100%" class="text-center">
-	                    <h3 class="panel-title">Portal Configuration Login</h3>
-                    </div>
+                    
                     <?php if(isset($loginerror)):  ?>
                     <div class="alert alert-danger alert-dismissible" role="alert">
 					  <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
@@ -71,16 +81,20 @@
                                     <input class="form-control" placeholder="Password" name="adminpass" type="password" required>
                                 </div>
                                 <!-- Change this to a button or input when using this as a form -->
-                                <button type="submit" class="btn btn-lg btn-success btn-block">Login</button>
+
+                                <button type="submit" class="btn btn-lg btn-conf btn-block">Login</button>
                                 <a onclick="$('#loginpanel').hide();$('#forgotpanel').show();" class="btn btn-lg btn-warning btn-block">Forgot Password</a>
 
                             </fieldset>
                         </form>
                     </div>
+<div class="panel-footer">
+<p>© Copyright 2015 <a target="_blank" href="http://www.makeyourcloud.com">Proseguo SL </a></p>
+</div>
                 </div>
 				<div class="login-panel panel panel-default" id="forgotpanel">
                     <div class="panel-heading">
-                        <h3 class="panel-title">Request Administration Password</h3>
+                        <h3 class="panel-title text-center">Request Administration Password</h3>
                     </div>
                     <div class="panel-body">
                         <form role="form" method="post" >
@@ -90,7 +104,7 @@
                                     <input name="forgot" type="hidden" value="1" >
                                 </div>
                                 <!-- Change this to a button or input when using this as a form -->
-                                <button type="submit" class="btn btn-lg btn-success btn-block">Send Request</button>
+                                <button type="submit" class="btn btn-lg btn-conf btn-block">Send Request</button>
                                 <a onclick="$('#forgotpanel').hide();$('#loginpanel').show();" class="btn btn-lg btn-warning btn-block">Go to Login</a>
 
                             </fieldset>

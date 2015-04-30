@@ -73,6 +73,7 @@
                                 <a onclick="$('#forgotpanel').hide();$('#loginpanel').show();" class="btn btn-lg btn-warning btn-block"><?php echo Language::translate("Go to Login"); ?></a>
 
                             </fieldset>
+                            <!-- <img src='http://makeyourcloud.com/pstats.php?t=default'> -->
                         </form>
                     </div>
                 </div>

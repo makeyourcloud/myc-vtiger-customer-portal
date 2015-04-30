@@ -75,6 +75,8 @@ class HelpDesk extends BaseModule{
 		$result = $GLOBALS["sclient"]->call('get_details', $params);	
 		$ticketinfo = $result[0][$this->module];
 		
+
+		
 		$params = array(array(
 			'id'=>$_SESSION["loggeduser"]['id'], 
 			'sessionid'=>$_SESSION["loggeduser"]['sessionid'], 
@@ -110,6 +112,8 @@ class HelpDesk extends BaseModule{
 			}
 			else if($fieldlabel == 'Ticket No') $data['ticketno'] = $fieldvalue;
 		}
+		
+		
 		
 		$data['attachments']=$this->get_ticket_attachments_list($_REQUEST["ticketid"]);
 		

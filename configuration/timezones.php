@@ -1,5 +1,13 @@
 <?php
 
+/* * *******************************************************************************
+ * The content of this file is subject to the MYC Vtiger Customer Portal license.
+ * ("License"); You may not use this file except in compliance with the License
+ * The Initial Developer of the Original Code is Proseguo s.l. - MakeYourCloud
+ * Portions created by Proseguo s.l. - MakeYourCloud are Copyright(C) Proseguo s.l. - MakeYourCloud
+ * All Rights Reserved.
+ * ****************************************************************************** */
+
 return array(
 	"Pacific/Enderbury" => "(GMT+13:00) Phoenix Islands Time ( Pacific / Enderbury  )",
 	"Pacific/Tongatapu" => "(GMT+13:00) Tonga Time ( Pacific / Tongatapu )",

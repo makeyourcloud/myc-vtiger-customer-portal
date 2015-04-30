@@ -1,5 +1,14 @@
 <?php
 
+/* * *******************************************************************************
+ * The content of this file is subject to the MYC Vtiger Customer Portal license.
+ * ("License"); You may not use this file except in compliance with the License
+ * The Initial Developer of the Original Code is Proseguo s.l. - MakeYourCloud
+ * Portions created by Proseguo s.l. - MakeYourCloud are Copyright(C) Proseguo s.l. - MakeYourCloud
+ * All Rights Reserved.
+ * ****************************************************************************** */
+ 
+
 require "../portal.php";
 
 class ConfigEditor
@@ -17,8 +26,8 @@ class ConfigEditor
     public static function write($filename, array $config)
     {
         $config = var_export($config, true);
-        file_put_contents($filename, "<?php return $config ;");
-        return "OK";
+        if(file_put_contents($filename, "<?php return $config ;")) return "OK";
+        else return "<b>There was an error saving your configuration: the file '".$filename."' is not writeable!</b><br> Please give permission 644 to this file and eventually ensure that the proprietary of this file is the same that is executing this script (usually apache or www-data depending of your server).";
     }
     
     

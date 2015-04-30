@@ -15,6 +15,13 @@
                 <!-- /.col-lg-12 -->
             </div>
             
+                            <?php 
+                	if(isset($data['plugin_data']['views']['header']))  
+                		foreach($data['plugin_data']['views']['header'] as $pluginname => $viewname)
+                			Template::displayPlugin($pluginname,$data,$viewname);
+                
+                ?> 
+            
             <div class="row">
                 <div class="col-lg-12">
                     <div class="panel panel-default">
@@ -30,7 +37,8 @@
                                 <table class="table table-striped table-bordered table-hover" id="dataTables-example">
                                     <thead>
                                         <tr>
-                                        <?php foreach($data['records_columns'] as $hf) echo "<th>".Language::translate($hf)."</th>"; ?>
+                                        <?php foreach($data['records_columns'] as $hf) 
+                                        	echo "<th>".Language::translate($data['moduleinfo']['fieldslabels'][$hf])."</th>"; ?>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -41,11 +49,22 @@
                                     			echo "<tr>";
                                     			foreach($data['records_columns'] as $fieldname)  
                                     			
-                                    			if($fieldname==$GLOBALS['api_modules'][$module]['link_field']) 
+                                    			if($fieldname==$data['moduleinfo']['labelFields'] ||(is_array($data['moduleinfo']['labelFields']) && in_array($fieldname, $data['moduleinfo']['labelFields']))) 
                                     			echo "<td><a href='index.php?module=".$module."&action=index&id=".$record['id']."'>".Language::translate($record[$fieldname])."</a></td>";
                                     			
+                                    			elseif(strpos($fieldname,'.')!==false){
+	                                    			$fieldparts=explode(".", $fieldname);
+	                                    			
+	                                    			echo "<td>".Language::translate($record[$fieldparts[0]][$fieldparts[1]]);	                                    			
+	                                    			echo "</td>";
+                                    			}
+                                    			
+                                    			elseif(is_array($record[$fieldname])){
+	                                    			echo "<td>".Language::translate(reset($record[$fieldname]))."</td>";
+                                    			}
+                                    			
 												else echo "<td>".Language::translate($record[$fieldname])."</td>";
-																									                                   	
+																									                                  
                                     			echo "</tr>";
                                     			 																	
                                     	}
@@ -67,6 +86,13 @@
                 <!-- /.col-lg-12 -->
             </div>
             <!-- /.row -->
+            
+                            <?php 
+                	if(isset($data['plugin_data']['views']['footer']))  
+                		foreach($data['plugin_data']['views']['footer'] as $pluginname => $viewname)
+                			Template::displayPlugin($pluginname,$data,$viewname);
+                
+                ?> 
             
 		</div>
         <!-- /#page-wrapper -->

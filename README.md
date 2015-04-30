@@ -2,8 +2,54 @@ MYC Vtiger Customer Portal
 ============================================
 Alternative vTiger Customer Portal - Bootstrap 3 Based - Modular Code
 
+Please refer to our forum for any support question: http://forum.makeyourcloud.com  
+For more informations, Tutorials, F.A.Q, Themes and Plugins you can visit our website: http://makeyourcloud.com  
 
-UPDATED VERSION 0.5 - NEW FEATURES & BUX FIXES:
+
+UPDATED VERSION 0.8 - NEW FEATURES & BUX FIXES:
+
+
+[FIXED] Problems reported in the setup process for some servers 
+
+[FIXED] Language issues
+
+[FIXED] Minor bugs
+
+[FIXED] Minor pdf download problems, ENHANCED PDFMaker compatibility
+
+[NEW FEATURE] Totally RENEWED ADMIN LAYOUT, categorized options to simplify the configuration process
+
+[NEW FEATURE] Integrated MYC WBSERVICES CLIENT library
+
+[NEW FEATURE] [LANGUAGE] FRENCH LANGUAGE pack integrated (provided by Chris)
+
+[NEW FEATURE] PLUGINS structure to allow easy extension of the portal functionalities
+
+[NEW FEATURE] PLUGINS STORE and THEMES STORE section.
+
+[NEW FEATURE] APPEARANCE SETTINGS section.
+
+[NEW FEATURE] DATE FORMAT option in Appearance settings menu to allow you specify how to show dates to your customers
+
+[NEW FEATURE] PORTAL TITLE option in Appearance settings menu to allow you specify the name to show as the page title 
+
+[NEW FEATURE] [PLUGIN] FREE plugin module to manage EVENTS, that allow you to choose WHICH FIELDS to show for the events LIST VIEW SPECIFYING the display ORDER, also provide an EVENTS CALENDAR view.
+
+[NEW FEATURE] [PLUGIN] FREE plugin to allow you CUSTOMIZE the portal MENU SORTING.
+
+NOTES:
+Some plugins like Event Plugin and Inventory Lines requires valid vtiger api credentials to work, this is required to enable the Standard Webservices Api related plugins but not indispensable to make the customer portal working, if you don’t want to insert, or you insert incorrect credentials all the plugins that requires this connection will be disabled but the portal will still work as usual.
+The same concept is applied to the google map api key, if you don’t provide an api key the map in the event plugin detail view will be disabled and the address text will be displayed instead.
+
+UPDATE INSTRUCTIONS:
+This update make some fundamental changes to the base code of the precedent version, our advice is to make a new fresh installation with the new files then apply your own customization ( also download an the updated version of our themes if you use it and upload the updated theme zip using the new theme manager section ).
+
+
+
+
+
+
+VERSION 0.5 - NEW FEATURES & BUX FIXES:
 
 [FIX] - Fixed a problem with the default index module permission, now it follow the order as you set in you CRM in the section customer portal settings
 
@@ -39,17 +85,6 @@ UPDATED VERSION 0.5 - NEW FEATURES & BUX FIXES:
 
 
 
-NOTES:
-To enable the new Event module you are required to set your vtiger api credentials, this is required to enable the Api-related features but not indispensable to make the customer portal working, if you don’t want to insert, or you insert incorrect credentials all the related functionalities will be disabled but the portal will still work as usual.
-The same concept is applied to the google map api key, if you don’t provide an api key the map will be disabled and the address text will be displayed instead.
-
-UPDATE INSTRUCTIONS:
-This update make some fundamental changes to the base code of the precedent version, our advice is to make a new fresh installation with the new files then apply your  own customization ( copy your themes/modules folders ), we guarantee that the themes and any custom modules are still 100% compatibles.
-If you did not make customizations to your theme, just download the updated version from our store and replace it in your portal.
-If you made customizations you need just 1 modification to your theme to enable the logo functionality, just follow the tutorial on our website: <a href=“http://www.makeyourcloud.com/tutorials-myc-vtiger-customer-portal.html” target=“_blank”>http://www.makeyourcloud.com/tutorials-myc-vtiger-customer-portal.html</a>
-
-
-
 
 
 VERSION 0.1 - PORTAL FEATURES:
@@ -71,8 +106,5 @@ VERSION 0.1 - PORTAL FEATURES:
 -Compatible with vTiger 5.x and 6.x
 
 
-You can find more info, tutorials and themes on our website:
-http://makeyourcloud.com
 
-
-Copyright 2014 Proseguo s.l. - MakeYourCloud
+Copyright 2014 - 2015 Proseguo s.l. - MakeYourCloud

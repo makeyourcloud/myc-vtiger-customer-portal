@@ -44,4 +44,4 @@ This Software is distribuited under GNU General Public License (GPL)
 http://www.gnu.org/licenses/gpl.txt
 
 
-Copyright 2014 Proseguo s.l. - MakeYourCloud
+Copyright 2014 - 2015 Proseguo s.l. - MakeYourCloud

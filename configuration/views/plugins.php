@@ -11,37 +11,36 @@
  ?>
 	   		
 	   		<?php
-	   		
-				$result = array(); 
-				$themesdir="../themes";
-				$cdir = scandir($themesdir); 
-				foreach ($cdir as $key => $value) 
-					if (!in_array($value,array(".","..")) && is_dir($themesdir."/".$value)){
+				foreach ($loaded_plugins as $pluginname => $pluginobj){
 				    	$selected=false;
-							if($value == $config['portal_theme']) $selected=true; 
+							if($pluginobj->pluginconfig['is_enabled'] == "true") $selected=true; 
 							?>
 							
 							
 								   		<div class="col-md-4 text-center">
 									   		<div class="panel panel-conf <?php if($selected) echo "panel-conf"; ?>">
 											  <div class="panel-heading">
-											    <h3 class="panel-title"><?php echo ucfirst($value); ?></h3>
+											    <h2 class="panel-title pull-left"><?php echo $pluginobj->plugin_label; ?></h2>
+											    <?php if(!$selected): ?>											  
+											  <h4 style="margin-top: 0px;" class="pull-right"><span class="label label-danger">Disabled&nbsp;</span></h4>
+											  <?php else: ?>
+											  <h4 style="margin-top: 0px;" class="pull-right"><span class="label label-success">Enabled&nbsp;</span></h4>
+											  <?php endif; ?>
+											  <br>
 											  </div>
 											  <div class="panel-body text-center">
-											  <?php if(file_exists("../themes/".$value."/preview.png")): ?>
-											    <img style="max-width:100%;" src="../themes/<?php echo $value; ?>/preview.png">
+											  <?php if(file_exists("../plugins/".$pluginname."/preview.png")): ?>
+											    <img style="max-width:100%;" src="../plugins/<?php echo $pluginname; ?>/preview.png">
 											  <?php else: ?>
 											  	<img style="max-width:100%;" src="views/assets/logo_myc_bsr.png">
 											  	<h4><small> No preview available</small></h4>
-											  <?php endif; ?>  
-											  <?php if(!$selected): ?>
-											  <br><br>
-											  <a class="btn btn-warning" href="../index.php?theme=<?php echo $value; ?>" target="_blank">Preview&nbsp;<i class="fa fa-eye"></i></a>
-											  <a class="btn btn-primary" href="?action=themes&deftheme=<?php echo $value; ?>">Set as Default&nbsp;<i class="fa fa-star-o"></i></a> 
-											  <?php else: ?>
-											  <br><br>
-											  <a class="btn btn-default disabled">Current Default Theme&nbsp;<i class="fa fa-star"></i></a>
-											  <?php endif; ?>
+											  <?php endif; ?> 
+											  
+											  <hr>
+											  <p> <?php echo $pluginobj->plugin_description; ?></p>
+											  <br>
+											  
+											  <a class="btn btn-warning btn-lg" href="?action=plugins&pn=<?php echo $pluginname; ?>" >Plugin Settings&nbsp;<i class="fa fa-wrench"></i></a> 
 											  </div>
 											</div>
 								   		</div>
@@ -53,17 +52,17 @@
 			?>
 
 										<div class="col-md-4 text-center">
-									   		<div class="panel panel-success panel-conf panel-conf-orange">
+									   		<div class="panel panel-conf panel-conf-orange">
 											  <div class="panel-heading">
-											    <h3 class="panel-title">Theme Upload</h3>
+											    <h3 class="panel-title">Plugin Upload</h3>
 											  </div>											  
 											  <div class="panel-body text-center" style="min-height:300px;">
 											  <br><i onclick="$('.upload').trigger('click');" class="fa fa-plus" style="font-size:10em;color:grey;cursor:pointer;"></i><br>
 											    <form enctype="multipart/form-data" method="post">
 												    <div class="text-center">
-													    <label>Upload New Theme Zip or Theme Upgrade</label>
-													    <p class="help-block">A theme Upgrade will replace all your current modification for the selected theme</p>
-													    <input name="theme_zip" type="file" class="form-control" accept="application/zip" >
+													    <label>Upload New Plugin Zip or Plugin Update</label>
+													 
+													    <input name="plugin_zip" type="file" class="form-control" accept="application/zip" >
 													    <br>
 													    <input type="submit" class="btn btn-success" value="Upload and Refresh">
 													</div>

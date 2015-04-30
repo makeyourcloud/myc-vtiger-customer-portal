@@ -16,7 +16,12 @@
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
-            
+                                      <?php 
+                	if(isset($data['plugin_data']['views']['header']))  
+                		foreach($data['plugin_data']['views']['header'] as $pluginname => $viewname)
+                			Template::displayPlugin($pluginname,$data,$viewname);
+                
+                ?> 
             <div class="row">
                 <div class="col-lg-12">
                     <div class="panel panel-default">
@@ -44,7 +49,7 @@
                                     	foreach($data['tickets'] as $tkf){
                                     	
                                     			echo "<tr>";
-                                    			foreach($tkf as $tkv) echo "<td>".$tkv['fielddata']."</td>";
+                                    			foreach($tkf as $tkv) echo "<td>".Language::translate($tkv['fielddata'])."</td>";
                                     			echo "</tr>";
                                     			 																	
                                     	}
@@ -74,6 +79,13 @@
                 <!-- /.col-lg-12 -->
             </div>
             <!-- /.row -->
+            
+                                      <?php 
+                	if(isset($data['plugin_data']['views']['footer']))  
+                		foreach($data['plugin_data']['views']['footer'] as $pluginname => $viewname)
+                			Template::displayPlugin($pluginname,$data,$viewname);
+                
+                ?> 
             
 		</div>
         <!-- /#page-wrapper -->

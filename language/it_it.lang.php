@@ -22,6 +22,9 @@ $app_strings = Array(
 
 'INVALID_USERNAME_OR_PASSWORD'=>"L' Username o la Password inseriti non sono corretti!",
 "UPLOAD_COMPLETED"=>"Caricamento Completato",
+
+"Close Ticket"=>"Chiudi Ticket",
+"Open"=>"Aperto",
 );
 
 
