@@ -104,7 +104,7 @@
 				    <select name="default_language" id="default_language" class="form-control" >
 				    <?php
 				    	   $result = array(); 
-						   $themesdir="../language";
+						   $themesdir="../languages";
 						   $cdir = scandir($themesdir); 
 						   foreach ($cdir as $key => $value) 
 						      if (!in_array($value,array(".","..")) && strpos($value, '.lang.php') !== false)  
