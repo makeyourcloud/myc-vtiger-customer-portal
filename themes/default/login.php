@@ -45,14 +45,17 @@
                                 </div>
                                 <div class="form-group">
                                     <select class="form-control" name="lang" required>
-                                    	<?php foreach($GLOBALS['languages'] as $file => $lang) 
-                                    			echo '<option value="'.$file.'">'.$lang.'</option>';
+                                    	<?php foreach($GLOBALS['languages'] as $file => $lang) {
+                                    			echo '<option value="'.$file.'"';
+                                                if($file==$GLOBALS['default_language']) echo ' selected';
+                                                echo '>'.$lang.'</option>';
+                                            }
 	                                    ?>
                                     </select>
                                 </div>
                                 <!-- Change this to a button or input when using this as a form -->
                                 <button type="submit" class="btn btn-lg btn-success btn-block"><?php echo Language::translate("Login"); ?></button>
-                                <a onclick="$('#loginpanel').hide();$('#forgotpanel').show();" class="btn btn-lg btn-warning btn-block">Forgot Password</a>
+                                <a onclick="$('#loginpanel').hide();$('#forgotpanel').show();" class="btn btn-lg btn-warning btn-block"><?php echo Language::translate("Forgot Password"); ?></a>
                             </fieldset>
                         </form>
                     </div>
