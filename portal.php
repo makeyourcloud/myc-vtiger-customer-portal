@@ -455,7 +455,7 @@ class User
 				
 			else if(isset($_SESSION["loggeduser"]['language'])) $tlang=$_SESSION["loggeduser"]['language'];
 				
-			else $tlang = "it_it";
+			else $tlang = $GLOBALS['default_language'];
 		
 			$params = array('user_name' => "$email",
 			'user_password'=>"$password",
