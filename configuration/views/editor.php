@@ -19,12 +19,12 @@
 	   		?>
 			   	<div class="col-md-6">				   	
 				  <div class="form-group">
-				    <label for="vtiger_path">Portal Administrator Username <span style="color:red">*</span></label>
+				    <label for="admin_user">Portal Administrator Username <span style="color:red">*</span></label>
 				    <p class="help-block">This username will be used to access this configuration page.</p>
 				    <input type="text" class="form-control" id="admin_user" name="admin_user" value="<?php echo $config['admin_user']; ?>" required >
 				  </div>
 				  <div class="form-group">
-				    <label for="vtiger_path">Portal Administrator Password <span style="color:red">*</span></label>
+				    <label for="admin_pass">Portal Administrator Password <span style="color:red">*</span></label>
 				    <p class="help-block">This is the password for the portal administrator, required to access this configuration page.</p>
 				    <input type="password" class="form-control" id="admin_pass" name="admin_pass" value="<?php echo $config['admin_pass']; ?>" required >
 				    <p class="help-block passerror_l" style="color:red">Password must contain at least 6 characters!</b></p>
@@ -36,7 +36,7 @@
 
 				  </div>
 				  <div class="form-group">
-				    <label for="vtiger_path">Portal Administrator Email <span style="color:red">*</span></label>
+				    <label for="admin_email">Portal Administrator Email <span style="color:red">*</span></label>
 				    <p class="help-block">This is the mail of the portal administrator account, if needed this will be used to reset the password to access this configuration page.</p>
 				    <input type="text" class="form-control" id="admin_email" name="admin_email" value="<?php echo $config['admin_email']; ?>" required >
 				  </div>
@@ -104,7 +104,7 @@
 				    <select name="default_language" id="default_language" class="form-control" >
 				    <?php
 				    	   $result = array(); 
-						   $themesdir="../language";
+						   $themesdir="../languages";
 						   $cdir = scandir($themesdir); 
 						   foreach ($cdir as $key => $value) 
 						      if (!in_array($value,array(".","..")) && strpos($value, '.lang.php') !== false)  
