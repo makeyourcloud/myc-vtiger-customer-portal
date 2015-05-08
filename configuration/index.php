@@ -32,7 +32,7 @@ if(ConfigEditor::checkLogin()){
 		if(!isset($_POST['hiddenmodules']) && !isset($config['hiddenmodules'])) $newconfig['hiddenmodules'] = array();
 		if(!isset($_POST['enabled_api_modules']) && !isset($config['enabled_api_modules'])) $newconfig['enabled_api_modules'] = array();
 		
-		if($_FILES['portal_logo']['name']!="" && !isset($config['portal_logo']) || $config['portal_logo']==""){
+		if($_FILES['portal_logo']['name']!="" || !isset($config['portal_logo']) || $config['portal_logo']==""){
 			$ext = pathinfo($_FILES['portal_logo']['name'], PATHINFO_EXTENSION);
 			$newfilename=Router::slugify(str_replace(".".$ext, "", $_FILES['portal_logo']['name'])).".".$ext;
 			

@@ -17,10 +17,18 @@ class WSRequest {
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		# For use with SSL - This might be insecure!
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        
 		curl_setopt($ch,CURLOPT_URL, $wsurl);
 		curl_setopt($ch,CURLOPT_POST, count($data));
 		curl_setopt($ch,CURLOPT_POSTFIELDS, $dataquerystring);
 		$result = curl_exec($ch);
+		if(curl_errno($ch))
+		{
+    		error_log( 'cURL-Error: ' . curl_error($ch));
+		}
 		curl_close($ch);
 		
 		
@@ -38,8 +46,16 @@ class WSRequest {
 		$ch = curl_init();	 
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		# For use with SSL - This might be insecure!
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        
 		curl_setopt($ch, CURLOPT_URL, $wsurl.$query);	 
 		$result = curl_exec($ch);
+		if(curl_errno($ch))
+		{
+    		error_log( 'cURL-Error: ' . curl_error($ch));
+		}
 		curl_close($ch);
 
 
@@ -55,8 +71,17 @@ class WSRequest {
 		curl_setopt($ch, CURLOPT_TIMEOUT, 5);
 		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		# For use with SSL - This might be insecure!
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        
 		$data = curl_exec($ch);
 		$httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		# For debugging errors from cURL
+		if(curl_errno($ch))
+		{
+    		error_log( 'cURL-Error: ' . curl_error($ch));
+		}
 		curl_close($ch); 
 		if($httpcode>=200 && $httpcode<300){
 			return true;

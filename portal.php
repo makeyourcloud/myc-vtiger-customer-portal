@@ -194,7 +194,7 @@ class Language
 		else if(isset($_SESSION["loggeduser"]['language'])) $sel_lang=$_SESSION["loggeduser"]['language'];
 		else $sel_lang=key($GLOBALS['languages']);
 		
-		if(file_exists(ROOT_PATH."/language/".$sel_lang.".lang.php")) include(ROOT_PATH."/language/".$sel_lang.".lang.php");
+		if(file_exists(ROOT_PATH."/languages/".$sel_lang.".lang.php")) include(ROOT_PATH."/languages/".$sel_lang.".lang.php");
 		
 		if(preg_match('/\\A(?:^((\\d{2}(([02468][048])|([13579][26]))[\\-\\/\\s]?((((0?[13578])|(1[02]))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])))))|(\\d{2}(([02468][1235679])|([13579][01345789]))[\\-\\/\\s]?((((0?[13578])|(1[02]))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\\-\\/\\s]?((0?[1-9])|(1[0-9])|(2[0-8]))))))(\\s(((0?[0-9])|(1[0-9])|(2[0-3]))\\:([0-5][0-9])((\\s)|(\\:([0-5][0-9])))?))?$)\\z/', $term) || $term=="2015-03-26 19:31:51"){
 			$date=strtotime($term);
@@ -238,7 +238,7 @@ class PortalConfig
 				if(isset($GLOBALS['default_timezone']) && $GLOBALS['default_timezone']!="") 
 					date_default_timezone_set($GLOBALS['default_timezone']);
 											
-				foreach (scandir("language") as $key => $value){
+				foreach (scandir(ROOT_PATH."/languages/") as $key => $value){
 					if (!in_array($value,array(".","..")) && strpos($value, '.lang.php') !== false){
 						$value=str_replace(".lang.php", "", $value); 						
 						$GLOBALS['languages'][$value]=Language::translate($value,$value);							
@@ -455,7 +455,7 @@ class User
 				
 			else if(isset($_SESSION["loggeduser"]['language'])) $tlang=$_SESSION["loggeduser"]['language'];
 				
-			else $tlang = "it_it";
+			else $tlang = $GLOBALS['default_language'];
 		
 			$params = array('user_name' => "$email",
 			'user_password'=>"$password",
