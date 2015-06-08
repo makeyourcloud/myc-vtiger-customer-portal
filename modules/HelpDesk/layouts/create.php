@@ -129,7 +129,7 @@
                         <!-- /.panel-body -->
                         
                         <div class="panel-footer">
-							<input type="submit" value="Submit Ticket" class="btn btn-success btn-lg">
+							<input type="submit" value="<?php echo Language::translate("Submit Ticket"); ?>" class="btn btn-success btn-lg">
                         
                         </div>
                         </form>
