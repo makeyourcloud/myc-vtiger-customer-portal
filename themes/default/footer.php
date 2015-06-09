@@ -34,23 +34,23 @@
       <?php if($msgt!="success"): ?>
         <form role="form" method="post">
 		  <div class="form-group">
-		    <label for="exampleInputPassword2">Old Password</label>
-		    <input type="password" class="form-control" name="old_password" id="exampleInputPassword2" placeholder="Old Password">
+		    <label for="exampleInputPassword2"><?php echo Language::translate("Old Password"); ?></label>
+		    <input type="password" class="form-control" name="old_password" id="exampleInputPassword2" placeholder="<?php echo Language::translate("Old Password"); ?>">
 		  </div>
 		  <div class="form-group">
-		    <label for="exampleInputPassword1">New Password</label>
-		    <input type="password" class="form-control" name="new_password" id="exampleInputPassword1" placeholder="New Password">
+		    <label for="exampleInputPassword1"><?php echo Language::translate("New Password"); ?></label>
+		    <input type="password" class="form-control" name="new_password" id="exampleInputPassword1" placeholder="<?php echo Language::translate("New Password"); ?>">
 		  </div>
 		  <div class="form-group">
-		    <label for="exampleInputPassword3">Confirm New Password</label>
-		    <input type="password" class="form-control" name="confirm_password" id="exampleInputPassword3" placeholder="Confirm New Password">
+		    <label for="exampleInputPassword3"><?php echo Language::translate("Confirm New Password"); ?></label>
+		    <input type="password" class="form-control" name="confirm_password" id="exampleInputPassword3" placeholder="<?php echo Language::translate("Confirm New Password"); ?>">
 		  </div>
 		<input type="hidden" name="fun" value="changepassword">
 		<?php endif; ?>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <?php if($msgt!="success"): ?><input type="submit" class="btn btn-primary" value="Change Password"><?php endif; ?>
+        <button type="button" class="btn btn-default" data-dismiss="modal"><?php echo Language::translate("Close"); ?></button>
+        <?php if($msgt!="success"): ?><input type="submit" class="btn btn-primary" value="<?php echo Language::translate("Change Password"); ?>"><?php endif; ?>
         </form>
       </div>
     </div>

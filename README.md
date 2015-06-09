@@ -5,8 +5,9 @@ Alternative vTiger Customer Portal - Bootstrap 3 Based - Modular Code
 Please refer to our forum for any support question: http://forum.makeyourcloud.com  
 For more informations, Tutorials, F.A.Q, Themes and Plugins you can visit our website: http://makeyourcloud.com  
 
+UPDATED VERSION 0.8.1 - MINOR BUG FIXES
 
-UPDATED VERSION 0.8 - NEW FEATURES & BUX FIXES:
+UPDATED VERSION 0.8 - NEW FEATURES & BUG FIXES:
 
 
 [FIXED] Problems reported in the setup process for some servers 
