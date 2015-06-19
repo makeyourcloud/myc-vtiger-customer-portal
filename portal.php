@@ -318,14 +318,10 @@ class Api{
     }
     
     
-    public static function getModuleId($module){
-	    $modules = $GLOBALS['api_client']->doListTypes();
-	    $c=1;
-	    foreach($modules as $modulename => $moduleinfo) {
-	       if($modulename==$module) return $c;
-	       $c++;
-		} 
-    }
+	public static function getModuleId($modulename){
+	   	$moduledet = $GLOBALS['api_client']->doDescribe($modulename);
+	   	return $moduledet['idPrefix'];
+   	}
     
     public static function is_connected(){
     	global $api_client;
@@ -451,7 +447,7 @@ class User
 	
 		function portal_login($email,$password){
 		
-			if(isset($_REQUEST['lang']) && file_exists("language/".$_REQUEST['lang'].".lang.php")) $tlang = $_REQUEST['lang'];
+			if(isset($_REQUEST['lang']) && file_exists("languages/".$_REQUEST['lang'].".lang.php")) $tlang = $_REQUEST['lang'];
 				
 			else if(isset($_SESSION["loggeduser"]['language'])) $tlang=$_SESSION["loggeduser"]['language'];
 				

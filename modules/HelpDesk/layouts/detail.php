@@ -105,7 +105,7 @@
                         <table class="table">
                         	<?php 
                         	if(isset($data['attachments']) && count($data['attachments'])>0 && $data['attachments']!="") foreach($data['attachments'] as $cat){
-	                        	echo '<tr><td><h5>'.ltrim($cat['filename'],$_REQUEST['ticketid'].'_').'</h5></td><td><a class="btn btn-success btn-sm"  href="index.php?downloadfile=true&fileid='.$cat['fileid'].'&filename='.$cat['filename'].'&filetype='.$cat['filetype'].'&filesize='.$cat['filesize'].'&ticketid='.$_REQUEST['ticketid'].'">Download</a></td></tr>';
+	                        	echo '<tr><td><h5>'.ltrim($cat['filename'],$_REQUEST['ticketid'].'_').'</h5></td><td><a class="btn btn-success btn-sm"  href="index.php?downloadfile=true&fileid='.$cat['fileid'].'&filename='.$cat['filename'].'&filetype='.$cat['filetype'].'&filesize='.$cat['filesize'].'&ticketid='.$_REQUEST['ticketid'].'">'.Language::translate("Download").'</a></td></tr>';
                         	}
                         	//print_r($data['attachments']);
                         	?>
