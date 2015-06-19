@@ -157,8 +157,13 @@ class VTWebservices {
 	} 
 	
 	public function getModuleId($module){
-		$moduledet=$this->getModuleFields($module);
-		return $moduledet['idPrefix'];
+		$modules=$this->getModules();
+		$x=1;		
+		foreach($modules->result->types as $name){
+			if($name==$module) return $x;
+			$x++;
+		}
+		return false; 
 	}
 	
 	
